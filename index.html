@@ -237,7 +237,7 @@ ${coverageInstruction(userMsgCount, idx, name)}`;
 
     // ── Anthropic API (via Netlify proxy) ─────────────────────────
     async function claudeChat(system, messages) {
-      const res = await fetch("/.netlify/functions/claude", {
+      const res = await fetch("/.netlify/functions/api", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
