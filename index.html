@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Harries Family Archive</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+    *{box-sizing:border-box;margin:0;padding:0;}
+
+    /* Slate & Sage — default / Mike */
+    :root{
+      --cr:#F3F4F1;--crd:#E6E8E0;--ink:#1E231A;--mu:#4A5240;
+      --go:#7A8C5E;--gl:#5C7A3E;--bd:#C8CBBD;
+      --bai:#FFFFFF;--bu:#3D4A35;--bt:#F3F4F1;
+      --sh:0 2px 16px rgba(20,30,15,.09);
+      --done-bg:#EFF4E8;--done-bd:#AECB8A;--done-cl:#4A7A28;
+    }
+
+    /* Soft Red & Black — Sue */
+    .theme-sue{
+      --cr:#FAF0F0;--crd:#F2DADA;--ink:#1A0808;--mu:#7A3030;
+      --go:#B84040;--gl:#C85050;--bd:#E0B8B8;
+      --bai:#FFF8F8;--bu:#8B1A1A;--bt:#FAF0F0;
+      --sh:0 2px 16px rgba(80,10,10,.10);
+      --done-bg:#F4EFF4;--done-bd:#C8A0C8;--done-cl:#7A3A7A;
+    }
+
+    html,body{height:100%;background:var(--cr);-webkit-font-smoothing:antialiased;}
+    #root{height:100%;}
+    .app{min-height:100dvh;font-family:'Spectral',Georgia,serif;color:var(--ink);background:var(--cr);transition:background .4s,color .3s;}
+
+    .wel{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:52px 24px;text-align:center;}
+    .orn{font-size:20px;letter-spacing:10px;color:var(--gl);margin-bottom:28px;opacity:.85;}
+    .wel h1{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,6vw,42px);font-weight:700;line-height:1.15;margin-bottom:6px;}
+    .wel .tag{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--go);font-size:clamp(13px,3vw,17px);margin-bottom:48px;}
+    .letter{max-width:580px;background:var(--crd);border:1px solid var(--bd);padding:36px 32px;text-align:left;margin-bottom:48px;box-shadow:var(--sh);}
+    .letter p{font-size:clamp(13px,3vw,15px);line-height:1.9;color:var(--mu);margin-bottom:14px;}
+    .letter p:last-child{margin-bottom:0;}
+    .sig{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--ink);margin-top:8px;}
+
+    .btn{display:inline-block;padding:15px 44px;font-family:'Spectral',serif;font-size:15px;letter-spacing:.06em;cursor:pointer;border-radius:2px;transition:all .2s;text-align:center;}
+    .btn-d{background:var(--ink);color:var(--cr);border:none;}
+    .btn-d:hover{background:var(--go);}
+    .btn-o{background:none;border:1.5px solid var(--ink);color:var(--ink);}
+    .btn-o:hover{background:var(--ink);color:var(--cr);}
+    .btn:disabled{opacity:.35;cursor:default;}
+
+    .ns{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 24px;text-align:center;}
+    .ns h2{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,5vw,32px);margin-bottom:10px;}
+    .ns .sub{color:var(--mu);font-size:15px;margin-bottom:56px;line-height:1.6;}
+    .nc-grid{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;}
+    .nc{width:185px;padding:48px 20px;background:var(--crd);border:1.5px solid var(--bd);cursor:pointer;transition:all .2s;text-align:center;box-shadow:var(--sh);border-radius:2px;}
+    .nc:hover{border-color:var(--gl);transform:translateY(-4px);box-shadow:0 12px 32px rgba(20,30,15,.15);}
+    .nc-l{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;margin-bottom:8px;}
+    .nc-n{font-family:'Spectral',Georgia,serif;font-size:12px;color:var(--mu);font-style:italic;line-height:1.4;}
+
+    .sw{min-height:100dvh;padding:52px 24px 56px;max-width:640px;margin:0 auto;width:100%;}
+    .bk{background:none;border:none;font-family:'Spectral',serif;color:var(--go);font-size:13px;cursor:pointer;padding:0;margin-bottom:22px;letter-spacing:.05em;display:block;}
+    .sw h2{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,5vw,28px);margin-bottom:5px;}
+    .sw .sh{font-size:13px;color:var(--mu);font-style:italic;margin-bottom:36px;}
+    .sl{display:flex;flex-direction:column;gap:10px;}
+    .si{display:flex;align-items:center;gap:16px;padding:20px 18px;background:var(--crd);border:1px solid var(--bd);cursor:pointer;transition:all .2s;text-align:left;width:100%;box-shadow:var(--sh);border-radius:2px;}
+    .si:hover{border-color:var(--gl);transform:translateX(4px);}
+    .si.done{background:var(--done-bg);border-color:var(--done-bd);}
+    .si-n{width:38px;height:38px;background:var(--ink);color:var(--cr);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:15px;flex-shrink:0;}
+    .si.done .si-n{background:var(--done-cl);}
+    .si-i{flex:1;}
+    .si-t{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--ink);margin-bottom:2px;}
+    .si-s{font-family:'Spectral',Georgia,serif;font-size:12px;color:var(--mu);font-style:italic;}
+    .si-tag{font-size:11px;font-style:italic;margin-top:3px;}
+    .si.done .si-tag{color:var(--done-cl);}
+    .si.prog .si-tag{color:var(--go);}
+
+    .iv{display:flex;flex-direction:column;height:100dvh;max-width:700px;margin:0 auto;width:100%;}
+    .iv-h{padding:14px 20px;border-bottom:1px solid var(--bd);background:var(--cr);flex-shrink:0;}
+    .iv-h h3{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--ink);}
+    .iv-h p{font-family:'Spectral',Georgia,serif;font-size:12px;color:var(--mu);font-style:italic;}
+    .msgs{flex:1;overflow-y:auto;padding:24px 20px;display:flex;flex-direction:column;gap:18px;-webkit-overflow-scrolling:touch;}
+    .m{max-width:90%;}
+    .m.ai{align-self:flex-start;}
+    .m.usr{align-self:flex-end;}
+    .bbl{padding:14px 18px;font-size:15px;line-height:1.8;border-radius:3px;}
+    .m.ai .bbl{background:var(--bai);border:1px solid var(--bd);color:var(--ink);}
+    .m.usr .bbl{background:var(--bu);color:var(--bt);}
+    .dots{display:flex;gap:5px;padding:14px 18px;background:var(--bai);border:1px solid var(--bd);border-radius:3px;align-self:flex-start;}
+    .dots span{width:7px;height:7px;border-radius:50%;background:var(--gl);animation:db 1.2s infinite ease-in-out;}
+    .dots span:nth-child(2){animation-delay:.2s;}
+    .dots span:nth-child(3){animation-delay:.4s;}
+    @keyframes db{0%,80%,100%{transform:scale(.75);opacity:.4}40%{transform:scale(1.15);opacity:1}}
+    .iw{padding:14px 16px;border-top:1px solid var(--bd);background:var(--cr);flex-shrink:0;}
+    .ir{display:flex;gap:8px;align-items:flex-end;}
+    .inp{flex:1;padding:12px 14px;font-family:'Spectral',serif;font-size:15px;border:1.5px solid var(--bd);border-radius:3px;background:var(--bai);color:var(--ink);resize:none;min-height:48px;max-height:120px;line-height:1.65;outline:none;transition:border-color .2s;}
+    .inp:focus{border-color:var(--gl);}
+    .ib{width:48px;height:48px;border:none;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;transition:all .2s;}
+    .snd{background:var(--ink);color:var(--cr);}
+    .snd:hover:not(:disabled){background:var(--go);}
+    .snd:disabled{opacity:.3;cursor:default;}
+    .vc{background:var(--crd);color:var(--mu);border:1.5px solid var(--bd);}
+    .vc.on{background:var(--go);border-color:var(--go);color:#fff;animation:vp 1.5s infinite;}
+    @keyframes vp{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+    .endbtn{display:block;width:100%;margin-top:10px;background:none;border:1px solid var(--bd);padding:9px;font-family:'Spectral',serif;font-size:13px;color:var(--mu);cursor:pointer;border-radius:2px;transition:all .2s;letter-spacing:.03em;}
+    .endbtn:hover{border-color:var(--go);color:var(--go);}
+
+    .cp{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:52px 24px;text-align:center;max-width:560px;margin:0 auto;}
+    .cp .orn2{font-size:36px;color:var(--gl);margin-bottom:12px;}
+    .cp h2{font-family:'Cormorant Garamond',serif;font-size:28px;margin-bottom:10px;}
+    .cp p{color:var(--mu);line-height:1.8;font-size:15px;margin-bottom:28px;}
+    .cpb{display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px;}
+    .em-ok{font-size:13px;color:var(--done-cl);font-style:italic;margin-top:4px;}
+    .em-err{font-size:13px;color:#A02818;font-style:italic;margin-top:4px;}
+    .divr{width:48px;height:1px;background:var(--gl);margin:20px auto;}
+
+    @media(max-width:400px){
+      .letter{padding:28px 22px;}
+      .nc{width:150px;padding:36px 16px;}
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // ── Config ────────────────────────────────────────────────────
+    const EMAILJS_SERVICE  = "service_y7l5a8d";
+    const EMAILJS_TEMPLATE = "template_goz70y7";
+    const EMAILJS_KEY      = "5TBd0gXYF9elgsgDv";
+    const RECIPIENT        = "charlieharries@googlemail.com";
+
+    // ── Sessions ──────────────────────────────────────────────────
+    const SESSIONS = [
+      { title: "Early Childhood",    sub: "Your earliest memories and family life" },
+      { title: "School Years",       sub: "Learning, friendships and growing up" },
+      { title: "Teenage Life",       sub: "The person you were becoming" },
+      { title: "Early Adulthood",    sub: "Independence and finding your way" },
+      { title: "Career & Ambitions", sub: "Work, purpose and what drove you" },
+      { title: "Love & Marriage",    sub: "Your relationship story" },
+      { title: "Becoming a Parent",  sub: "James, Robert, Charlie & Margaret" },
+      { title: "Middle Life",        sub: "How you changed through the years" },
+      { title: "Later Life",         sub: "Where you are now and what matters" },
+      { title: "A Letter to Us",     sub: "What you'd want us to know" },
+    ];
+
+    // ── Coverage checklists ───────────────────────────────────────
+    const COVERAGE = [
+      ["earliest childhood memories","description of family home","parents' personalities","siblings and their dynamic","neighbourhood and routines","what they were like as a small child"],
+      ["primary and secondary school experience","type of pupil they were","key subjects and teachers","friendships","hobbies outside school","things learned about themselves"],
+      ["how they changed as a teenager","social world and friendships","music and culture of the era","independence or rebellion","relationship with family","defining moments"],
+      ["leaving home","further education or training","first taste of independence","close relationships in this period","hopes and ambitions","formative experiences"],
+      ["first jobs","career development","what work has meant to them","professional achievements","difficult periods","work-life balance"],
+      ["relationships before their spouse","how they met","early relationship","knowing it was right","the wedding","what has sustained the marriage"],
+      ["becoming a parent for the first time with James","context when Robert arrived","circumstances around Charlie's birth","how things felt when Margaret completed the family","greatest joys of parenthood","hardest parts of raising four children"],
+      ["shifts in values through thirties and forties","relationship with children as they grew","relating to own parents as they aged","moments of doubt or reinvention","what they're most proud of"],
+      ["what a typical week looks like now","what brings genuine pleasure","relationship with children and grandchildren","things still wanted or hoped for","what they've made peace with","what they're most grateful for"],
+      ["what they want children to understand about them as a person","what they'd do differently as a parent","what they're most proud of","what they hope children carry forward","message for future grandchildren"],
+    ];
+
+    // ── Coverage instruction ──────────────────────────────────────
+    function coverageInstruction(userMsgCount, idx, name) {
+      const topics = COVERAGE[idx].map(t => `  • ${t}`).join("\n");
+      if (userMsgCount < 12) return `COVERAGE AREAS FOR THIS SESSION (work through these naturally, not mechanically):\n${topics}`;
+      if (userMsgCount < 20) return `COVERAGE AREAS FOR THIS SESSION:\n${topics}\n\nCOVERAGE CHECK: You are now mid-session. Quietly assess which of the above areas have been meaningfully covered and which still feel thin or untouched. Continue the interview, prioritising any gaps, but do not rush or signal this to ${name}.`;
+      if (userMsgCount < 30) return `COVERAGE AREAS FOR THIS SESSION:\n${topics}\n\nCOVERAGE CHECK — IMPORTANT: You have had around 20 exchanges. Before your next question, privately assess the list above. If the majority of areas have been covered with real depth and substance, gently ask ${name} whether they feel ready to wrap up this chapter or whether there's more they'd like to explore. Frame it warmly — something like: "I feel like we've covered a great deal of ground here. Is there anything else on your mind about [this period] before we finish, or are you happy to leave it there for now?" If significant areas remain genuinely uncovered, continue the interview rather than asking to close.`;
+      return `COVERAGE AREAS FOR THIS SESSION:\n${topics}\n\nCOVERAGE CHECK — THIS SESSION IS RUNNING LONG: You have had 30 or more exchanges. Unless ${name} is mid-flow on something clearly important and unfinished, ask warmly whether they are happy to bring this chapter to a close. Acknowledge how much they've shared, and let them choose. If they want to continue, honour that — but ask again after another 8 exchanges.`;
+    }
+
+    // ── System prompt ─────────────────────────────────────────────
+    function buildPrompt(nar, idx, userMsgCount = 0) {
+      const isMike = nar === "mike";
+      const name   = isMike ? "Mike" : "Sue";
+
+      const sharedContext = `FAMILY BACKGROUND AND TIMELINE:
+— Both Mike and Sue grew up in Essex.
+— Sue worked in London before having children.
+— Mike worked on a farm in Scotland for one or two summers in his younger years, and studied at Cirencester College for a chartered surveyor qualification.
+— The family started out in Newton-on-Trent, Lincolnshire, where Mike and Sue built their own house and raised the children in their early years.
+— Mike took a new job at Dorset County Council in Dorchester. For approximately a year and a half he commuted there weekly while the family remained in Lincolnshire. The whole family then relocated to Dorset in June 2004.`;
+
+      const whoTheyAre = isMike
+        ? `You are interviewing Michael (Mike) Harries, born in 1962. He is the fourth and youngest son of Patricia and Ken Harries (known to the grandchildren as Nana and Grandad). His three older brothers are Pete, Chris and Dave. He and his wife Sue have four children: James (born 1990), Robert (born 1992), Charlie (born 1995), and Margaret (born 1997).\n\n${sharedContext}`
+        : `You are interviewing Susan (Sue) Harries (née Watson), born in 1962. She is the eldest of two children; her younger brother is Richard. Their parents are Betty and Jeff Watson (known to the grandchildren as Grandma and Grandpa). Jeff (Grandpa) worked for Ford and travelled regularly to Germany for work. Richard attended boarding school at some point during their childhood. She and her husband Mike have four children: James (born 1990), Robert (born 1992), Charlie (born 1995), and Margaret (born 1997). CRITICAL INSTRUCTION: Do not ask about, mention, imply, or reference adoption in any way. If Sue raises the subject herself, receive it warmly and follow her lead — but you must never introduce the topic.\n\n${sharedContext}`;
+
+      const sessionFocus = [
+        `Ask about ${name}'s earliest memories; what their home was like; their parents — their personalities, how they showed love; ${isMike ? "his three older brothers and the dynamic between them" : "her younger brother Richard and their relationship"}; the neighbourhood and street they grew up in; family routines, meals, holidays; what they were like as a small child — bold or shy, what made them happy or frightened. Draw out sensory details and vivid, specific scenes.`,
+        `Ask about ${name}'s primary and secondary schools and what they were like; what kind of pupil they were; favourite and least favourite subjects; teachers who shaped them; friendships and who they spent time with; any struggles or achievements they're proud of; hobbies and interests outside school; things they learned about themselves during those years.`,
+        `Explore who ${name} was becoming as a teenager — they came of age in the late 1970s and early 1980s. Ask about how they changed and grew; their friendships and social world; the music, fashion and culture of the era; any experiences of independence or rebellion; their relationship with family during those years; what they believed in; moments that helped define who they became.`,
+        `Explore ${name}'s late teens and twenties. Ask about leaving home and what that felt like; any further education or training; early independence — where they lived, how they managed; the people they were close to; how their sense of self was forming; what they hoped for; the experiences that shaped them most in this period.`,
+        `Explore ${name}'s working life. Ask about first jobs and what they were like; how their career developed; what work has meant to them beyond income; achievements they're proud of; difficult periods professionally; how their ambitions have changed over time; how they balanced work and family life; anything they'd do differently.`,
+        `Explore ${name}'s relationship story. Ask about their experiences of relationships before meeting their spouse; how they met ${isMike ? "Sue" : "Mike"}; what the early relationship was like; how they knew this was right; their wedding; how marriage changed them; what the foundations of their relationship have been; what has sustained it across the years. This is a love story — let it be told as one.`,
+        `This is a particularly important session. Explore what it was like to become and to be a parent. For each child, ask specifically about what was happening in ${name}'s life at that time — not just the joy of the birth itself, but the context and circumstances around it. Work through them in order:\n- James (1990): What was life like at that point? What did it feel like becoming a parent for the very first time?\n- Robert (1992): Where were you both in life by then? What was it like having a second child?\n- Charlie (1995): What was happening in your lives around that time?\n- Margaret (1997): How did things feel when Margaret arrived, completing the family?\nThen ask more broadly: what have been the greatest joys and the hardest parts of raising four children together?`,
+        `Explore how ${name} changed through their thirties, forties and beyond. Ask about shifts in their values or priorities; how their relationship with their children evolved as they grew up; how they related to their own parents as they aged; friendships over the years; moments of doubt, reinvention or unexpected growth; what they're most proud of from this stretch of their life.`,
+        `Explore where ${name} is now. Ask about a typical week and what brings genuine pleasure; their relationship with their children and any grandchildren; health and how they think about getting older; things they still want to do or understand; what they've made peace with; how their perspective on what matters has changed; what they feel most grateful for.`,
+        `This is the final and most tender session. Gently invite ${name} to speak directly to their children — James, Robert, Charlie and Margaret — and to any future grandchildren who will one day read these words. Ask: what do you most want your children to understand about you as a person? What do you wish you'd said or done differently as a parent? What are you most proud of? What do you hope they carry forward into their own lives? What would you want grandchildren to know about where they came from? Take this session slowly and with great warmth. If ${name} finds it hard to start, suggest they imagine writing a letter to just one of their children, and begin from there.`,
+      ];
+
+      return `You are conducting this interview on behalf of Charlie Harries — ${name}'s son, the third of four children. Charlie built this to capture his parents' life stories for the whole family: James, Robert, Charlie and Margaret, and any grandchildren who follow. You speak and write exactly as Charlie would — and he has a very particular way of doing things.
+
+CHARLIE'S VOICE AND MANNER:
+— He leads with lightness and earns depth. He uses a quick, dry wit to put people at ease before going somewhere real. He never announces that he's about to get serious — he just gets there.
+— He is sharp and direct, not gushing. He does not pepper people with enthusiasm or over-affirm. When something interests him, he shows it by leaning in with a precise question, not by saying "how wonderful."
+— His instinctive response to something surprising is genuine curiosity: "That's really interesting — tell me more about that." Not performed interest. Actually wanting to know.
+— He reads people carefully and adapts. He would handle Mike and Sue differently, and he handles a raw moment differently from a light one. He never ploughs through when something clearly needs sitting with.
+— He holds the bigger purpose lightly but visibly. This is for all of us — James, Robert, Charlie, Margaret, and whoever comes next. That weight is there without being stated heavily.
+— He is an overachiever who takes quality seriously. He would be embarrassed by loose grammar, Americanisms, or lazy phrasing. Everything must be written in impeccable British English — correct spelling (colour, realise, honour, recognise, licence/license used correctly), proper punctuation, no sentence fragments used carelessly.
+
+${whoTheyAre}
+
+SESSION FOCUS — ${SESSIONS[idx].title.toUpperCase()}:
+${sessionFocus[idx]}
+
+INTERVIEW GUIDELINES:
+— Ask exactly one question at a time. Never stack questions in one message.
+— Open each session with a direct, light line — no preamble, no gushing.
+— When ${name} gives a brief answer, nudge with quiet curiosity: "Say a bit more about that" or "What was that actually like?"
+— When something resonates, follow it. Don't move on just because the listed topic has been touched.
+— Use ${name}'s name occasionally — personal, not clinical.
+— Never correct, challenge, or editorialise. This is ${name}'s story in ${name}'s own words.
+— British English exclusively, without exception.
+
+${coverageInstruction(userMsgCount, idx, name)}`;
+    }
+
+    // ── Storage (localStorage) ────────────────────────────────────
+    async function stGet(key) {
+      try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; }
+      catch { return null; }
+    }
+    async function stSet(key, val) {
+      try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+    }
+
+    // ── Anthropic API (via Netlify proxy) ─────────────────────────
+    async function claudeChat(system, messages) {
+      const res = await fetch("/.netlify/functions/claude", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system,
+          messages: messages.map(({ role, content }) => ({ role, content })),
+        }),
+      });
+      if (!res.ok) throw new Error("API error " + res.status);
+      const d = await res.json();
+      return d.content?.filter(b => b.type === "text").map(b => b.text).join("") || "";
+    }
+
+    // ── EmailJS ───────────────────────────────────────────────────
+    async function sendEmail(name, sessionTitle, messages) {
+      const transcript = messages
+        .filter(m => !m.hidden)
+        .map(m => `${m.role === "assistant" ? "Interviewer" : name}:\n${m.content}`)
+        .join("\n\n────\n\n");
+      const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          service_id: EMAILJS_SERVICE,
+          template_id: EMAILJS_TEMPLATE,
+          user_id: EMAILJS_KEY,
+          template_params: {
+            to_email: RECIPIENT,
+            subject: `Harries Family Archive — ${name} — ${sessionTitle}`,
+            name, session: sessionTitle, transcript,
+          },
+        }),
+      });
+      if (!res.ok) throw new Error("Email failed");
+    }
+
+    // ── App ───────────────────────────────────────────────────────
+    function App() {
+      const [screen,    setScreen]    = useState("welcome");
+      const [nar,       setNar]       = useState(null);
+      const [sIdx,      setSIdx]      = useState(null);
+      const [progress,  setProgress]  = useState({ mike: {}, sue: {} });
+      const [msgs,      setMsgs]      = useState([]);
+      const [input,     setInput]     = useState("");
+      const [loading,   setLoading]   = useState(false);
+      const [listening, setListening] = useState(false);
+      const [emailSt,   setEmailSt]   = useState("idle");
+
+      const endRef = useRef(null);
+      const taRef  = useRef(null);
+      const recRef = useRef(null);
+
+      useEffect(() => {
+        (async () => {
+          const mike = await stGet("prog_mike") || {};
+          const sue  = await stGet("prog_sue")  || {};
+          setProgress({ mike, sue });
+        })();
+      }, []);
+
+      useEffect(() => {
+        endRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, [msgs, loading]);
+
+      useEffect(() => {
+        if (!taRef.current) return;
+        taRef.current.style.height = "48px";
+        taRef.current.style.height = Math.min(taRef.current.scrollHeight, 120) + "px";
+      }, [input]);
+
+      useEffect(() => {
+        if (!nar || sIdx === null || msgs.length === 0) return;
+        setProgress(prev => {
+          const nd = { ...prev[nar], [sIdx]: { msgs, done: prev[nar]?.[sIdx]?.done || false } };
+          stSet(`prog_${nar}`, nd);
+          return { ...prev, [nar]: nd };
+        });
+      }, [msgs]);
+
+      async function openSession(narKey, idx) {
+        setNar(narKey);
+        setSIdx(idx);
+        setEmailSt("idle");
+        const existing = progress[narKey]?.[idx];
+        if (existing?.msgs?.length > 0) {
+          setMsgs(existing.msgs);
+          setScreen("interview");
+          return;
+        }
+        setMsgs([]);
+        setScreen("interview");
+        setLoading(true);
+        try {
+          const opening = await claudeChat(buildPrompt(narKey, idx), [
+            { role: "user", content: "Please begin the interview." },
+          ]);
+          setMsgs([
+            { role: "user", content: "Please begin the interview.", hidden: true },
+            { role: "assistant", content: opening },
+          ]);
+        } catch {
+          setMsgs([{ role: "assistant", content: "Something went wrong starting the session. Please check your connection and try again." }]);
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      async function send() {
+        if (!input.trim() || loading) return;
+        const userMsg      = { role: "user", content: input.trim() };
+        const next         = [...msgs, userMsg];
+        const userMsgCount = next.filter(m => m.role === "user" && !m.hidden).length;
+        setMsgs(next);
+        setInput("");
+        setLoading(true);
+        try {
+          const reply = await claudeChat(
+            buildPrompt(nar, sIdx, userMsgCount),
+            next.map(({ role, content }) => ({ role, content }))
+          );
+          setMsgs(prev => [...prev, { role: "assistant", content: reply }]);
+        } catch {
+          setMsgs(prev => [...prev, { role: "assistant", content: "Sorry, something went wrong. Please try again." }]);
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      function endSession() {
+        setProgress(prev => {
+          const nd = { ...prev[nar], [sIdx]: { msgs, done: true } };
+          stSet(`prog_${nar}`, nd);
+          return { ...prev, [nar]: nd };
+        });
+        if (recRef.current) { recRef.current.stop(); setListening(false); }
+        setScreen("complete");
+      }
+
+      function copyTranscript() {
+        const name = nar === "mike" ? "Mike" : "Sue";
+        const text = msgs
+          .filter(m => !m.hidden)
+          .map(m => `${m.role === "assistant" ? "Interviewer" : name}:\n${m.content}`)
+          .join("\n\n────\n\n");
+        navigator.clipboard.writeText(text).catch(() => {});
+      }
+
+      async function emailIt() {
+        setEmailSt("sending");
+        try {
+          await sendEmail(nar === "mike" ? "Mike" : "Sue", SESSIONS[sIdx].title, msgs);
+          setEmailSt("sent");
+        } catch {
+          setEmailSt("err");
+        }
+      }
+
+      function toggleVoice() {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) { alert("Voice input isn't supported on this browser. Please type your answer."); return; }
+        if (listening) { recRef.current?.stop(); setListening(false); return; }
+        const rec = new SR();
+        rec.continuous = true;
+        rec.interimResults = true;
+        rec.lang = "en-GB";
+        rec.onresult = e => {
+          const t = Array.from(e.results).map(r => r[0].transcript).join(" ");
+          setInput(t);
+        };
+        rec.onend  = () => { setListening(false); recRef.current = null; };
+        rec.onerror = () => { setListening(false); recRef.current = null; };
+        rec.start();
+        recRef.current = rec;
+        setListening(true);
+      }
+
+      function handleKey(e) {
+        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
+      }
+
+      const narName     = nar === "mike" ? "Mike" : "Sue";
+      const narProgress = progress[nar] || {};
+      const doneCount   = Object.values(narProgress).filter(s => s.done).length;
+      const appCls      = `app${nar === "sue" ? " theme-sue" : ""}`;
+
+      if (screen === "welcome") return (
+        <div className="app">
+          <div className="wel">
+            <div className="orn">✦ ✦ ✦</div>
+            <h1>The Harries Family Archive</h1>
+            <div className="tag">A life story, in your own words</div>
+            <div className="letter">
+              <p>Mum, Dad —</p>
+              <p>We know your stories — or at least, we think we do. We know the jobs, the places, the rough order of things. But if I'm honest, we know the headlines more than the detail. The small bits that make a moment real. What it actually felt like at the time.</p>
+              <p>Your childhoods feel further away to us than perhaps they do to you. The stories of Grandma and Grandpa, of Nana and Grandad — what they were really like, what it was like growing up around them — are the kind of thing that fades quietly if nobody ever writes it down. And your own experience of being parents — the joys, the hard bits, what was going on in your lives when each of us arrived — is something we've never properly understood from your side.</p>
+              <p>That's what this is for. Ten chapters, one life stage at a time — a chance to tell it properly, in your own words, with all the detail that usually gets left out. There's no rush. You can do a session, close the page, and pick it up whenever suits you.</p>
+              <p>The questions will feel like me, because in a sense they are.</p>
+              <p>This is for all of us — James, Robert, Margaret and me, and whoever comes next.</p>
+              <p>Just start talking. I'll do the rest.</p>
+              <div className="sig">Charlie x</div>
+            </div>
+            <button className="btn btn-d" onClick={() => setScreen("narrator")}>Begin</button>
+          </div>
+        </div>
+      );
+
+      if (screen === "narrator") return (
+        <div className="app">
+          <div className="ns">
+            <h2>Who is speaking today?</h2>
+            <p className="sub">Choose your name to begin or continue your story.</p>
+            <div className="nc-grid">
+              {[["mike","Dad","Michael Harries",false],["sue","Mum","Susan Harries",true]].map(([key, label, full, isSue]) => (
+                <button key={key} className="nc"
+                  style={isSue ? {borderColor:"#C85050", background:"#F2DADA"} : {}}
+                  onClick={() => { setNar(key); setScreen("sessions"); }}>
+                  <div className="nc-l" style={isSue ? {color:"#1A0808"} : {}}>{label}</div>
+                  <div className="nc-n" style={isSue ? {color:"#7A3030"} : {}}>{full}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+
+      if (screen === "sessions") return (
+        <div className={appCls}>
+          <div className="sw">
+            <button className="bk" onClick={() => setScreen("narrator")}>← Change narrator</button>
+            <h2>{nar === "mike" ? "Mike's" : "Sue's"} Story</h2>
+            <p className="sh">{doneCount} of {SESSIONS.length} sessions complete</p>
+            <div className="sl">
+              {SESSIONS.map((s, i) => {
+                const done   = narProgress[i]?.done;
+                const inProg = !done && (narProgress[i]?.msgs?.length || 0) > 0;
+                return (
+                  <button key={i} className={`si${done ? " done" : inProg ? " prog" : ""}`}
+                    onClick={() => openSession(nar, i)}>
+                    <div className="si-n">{done ? "✓" : i + 1}</div>
+                    <div className="si-i">
+                      <div className="si-t">{s.title}</div>
+                      <div className="si-s">{s.sub}</div>
+                      {done   && <div className="si-tag">Complete</div>}
+                      {inProg && <div className="si-tag">In progress — tap to continue</div>}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      );
+
+      if (screen === "interview") return (
+        <div className={appCls}>
+          <div className="iv">
+            <div className="iv-h">
+              <button className="bk" style={{marginBottom:"4px"}} onClick={() => setScreen("sessions")}>
+                ← {narName}'s sessions
+              </button>
+              <h3>{sIdx !== null ? SESSIONS[sIdx].title : ""}</h3>
+              <p>{sIdx !== null ? SESSIONS[sIdx].sub : ""}</p>
+            </div>
+            <div className="msgs">
+              {msgs.filter(m => !m.hidden).map((m, i) => (
+                <div key={i} className={`m ${m.role === "assistant" ? "ai" : "usr"}`}>
+                  <div className="bbl">{m.content}</div>
+                </div>
+              ))}
+              {loading && <div className="dots"><span/><span/><span/></div>}
+              <div ref={endRef}/>
+            </div>
+            <div className="iw">
+              <div className="ir">
+                <button className={`ib vc${listening ? " on" : ""}`} onClick={toggleVoice}
+                  title={listening ? "Tap to stop recording" : "Tap to speak"}>
+                  {listening ? "⏹" : "🎙"}
+                </button>
+                <textarea ref={taRef} className="inp"
+                  placeholder="Type your answer, or tap the microphone to speak…"
+                  value={input} onChange={e => setInput(e.target.value)}
+                  onKeyDown={handleKey} rows={1} />
+                <button className="ib snd" onClick={send} disabled={!input.trim() || loading}>➤</button>
+              </div>
+              <button className="endbtn" onClick={endSession}>End this session &amp; save</button>
+            </div>
+          </div>
+        </div>
+      );
+
+      if (screen === "complete") return (
+        <div className={appCls}>
+          <div className="cp">
+            <div className="orn2">✦</div>
+            <h2>Session saved</h2>
+            <p>That's <em>{sIdx !== null ? SESSIONS[sIdx].title : "the session"}</em> saved. Send the transcript to Charlie by email below, or copy it to share another way.</p>
+            <div className="cpb">
+              <button className="btn btn-d" onClick={emailIt}
+                disabled={emailSt === "sending" || emailSt === "sent"}>
+                {emailSt === "sending" ? "Sending…" : emailSt === "sent" ? "Sent ✓" : "Email transcript to Charlie"}
+              </button>
+              {emailSt === "sent" && <p className="em-ok">Sent to charlieharries@googlemail.com</p>}
+              {emailSt === "err"  && <p className="em-err">Email failed — please use the copy option below.</p>}
+              <button className="btn btn-o" onClick={copyTranscript}>Copy transcript to clipboard</button>
+              <div className="divr"/>
+              <button className="btn btn-o" onClick={() => setScreen("sessions")}>Back to sessions</button>
+            </div>
+          </div>
+        </div>
+      );
+
+      return null;
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
