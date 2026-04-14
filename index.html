@@ -235,9 +235,9 @@ ${coverageInstruction(userMsgCount, idx, name)}`;
       try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
     }
 
-    // ── Anthropic API (via Netlify proxy) ─────────────────────────
+    // ── Anthropic API (via Cloudflare Worker proxy) ───────────────
     async function claudeChat(system, messages) {
-      const res = await fetch("/.netlify/functions/api", {
+      const res = await fetch("https://harries-proxy.charlieharries.workers.dev/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
