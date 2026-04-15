@@ -235,11 +235,16 @@ ${coverageInstruction(userMsgCount, idx, name)}`;
       try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
     }
 
-    // ── Anthropic API (via Cloudflare Worker proxy) ───────────────
+    // ── Anthropic API (direct browser call) ──────────────────────
     async function claudeChat(system, messages) {
-      const res = await fetch("https://harries-proxy.charlieharries.workers.dev/", {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": "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",
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true",
+        },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
           max_tokens: 1000,
